@@ -1,0 +1,421 @@
+---
+title: "KEGG Pathway Analysis Results"
+author: "Tanya Deniz Toluay"
+output:
+  html_document:
+    theme: lumen
+    code_folding: hide
+    toc: true
+    toc_float: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r include=FALSE}
+pkgs<-c("DESeq2","SummarizedExperiment","GEOquery","biomaRt","tidyverse","stringr","pheatmap","RColorBrewer")
+invisible(sapply(pkgs,library, character.only = TRUE))
+library("ggnewscale")
+library("reshape2")
+library(GEOquery)
+library(limma)
+library(umap)
+```
+
+
+# Results
+
+
+The analysed results may be found under four different groups:
+
+* Leukocytes from patients with renal complications compared to leukocytes from healthy controls: L_CTRL_vs_L_K.
+
+* Leukocytes from patients with skin limited disease compared to leukocytes from healthy controls: L_CTRL_vs_L_S.
+
+* Skin biopsy samples from patients with renal complications compared to skin biopsy samples from healthy controls: S_CTRL_vs_S_K.
+
+* Skin biopsy samples from patients with skin limited disease compared to skin biopsy samples from healthy controls: S_CTRL_vs_S_S. 
+
+
+For each group, the KEGG enrichment analysis and pathway analysis has been performed. For KEGG enrichment analysis results, the meaning of each column is given as:                      
+
+* ID: Pathway ID
+
+* Description: Description of the pathway
+
+* GeneRatio: How many genes from the dataset found in the pathway ratio to how many genes the pathway have
+
+* BgRatio: Size of the gene set ratio to the size of all of the unique genes in the collection of gene sets 
+
+* P.value: P-value for Wilcoxon rank-sum testing, testing that p-values from DE analysis for genes in the pathway are smaller than those not in the pathway
+
+* P.adjust: Adjusted p-value
+
+* Q.value: Provides a means to control the positive false discovery rate
+
+* GeneID: ID of the found genes in the given pathway
+
+* Count: Number of genes in the pathway (regardless of DE p-value)       
+
+
+
+# L_CTRL_vs_L_K
+
+Leukocytes from patients with renal complications compared to leukocytes from healthy controls.
+
+
+## KEGG Enrichment Analysis                      
+                      
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+library(readxl)
+L_CTRL_vs_L_K_ <- read_excel("C:/deskt/DIR/7th/Desktop/Matija PhD/L_CTRL_vs_L_K..xlsx")
+# KEGG Enrichment Analysis of Gene Set
+library(clusterProfiler)
+library(pathview)
+kk <- enrichKEGG(gene         = L_CTRL_vs_L_K_$ENTREZID,
+                 organism     = 'hsa',
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.05)
+kkres<-as.data.frame(kk@result)
+knitr::kable(kkres[order(-kkres$Count), ])
+significantkkres<-kkres[kkres$pvalue<kk@pvalueCutoff & kkres$p.adjust<kk@pvalueCutoff ,]
+links<-sapply(rownames(head(kk)),function(x){browseKEGG(kk, x)})
+geneList<- L_CTRL_vs_L_K_$log2FoldChange
+names(geneList)<-L_CTRL_vs_L_K_$ENTREZID
+```            
+
+
+## KEGG Maps
+
+The top 5 maps are given as: 
+
+
+### hsa04611 ~	Platelet activation
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa04611 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04611",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+
+![](hsa04611.pathview.png)
+
+
+### hsa05168	~ Herpes simplex virus 1 infection
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05168 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05168",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+
+![](hsa05168.pathview.png)
+
+
+### hsa05165	~ Human papillomavirus infection
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05165 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05165",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+``` 
+
+
+![](hsa05165.pathview.png)
+
+
+### hsa04151	~ PI3K-Akt signaling pathway
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa04151 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04151",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+``` 
+
+
+![](hsa04151.pathview.png)
+
+
+### hsa04514	~ Cell adhesion molecules
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa04514 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04514",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+``` 
+
+
+![](hsa04514.pathview.png)
+
+
+
+# L_CTRL_vs_L_S
+
+Leukocytes from patients with skin limited disease compared to  leukocytes from healthy controls.
+
+
+## KEGG Enrichment Analysis                      
+
+                      
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+library(readxl)
+L_CTRL_vs_L_S <- read_excel("C:/deskt/DIR/7th/Desktop/Matija PhD/L_CTRL_vs_L_S.xlsx")
+# KEGG Enrichment Analysis of Gene Set
+library(clusterProfiler)
+library(pathview)
+kk <- enrichKEGG(gene         = L_CTRL_vs_L_S$ENTREZID,
+                 organism     = 'hsa',
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.05)
+kkres<-as.data.frame(kk@result)
+knitr::kable(kkres[order(-kkres$Count), ])
+significantkkres<-kkres[kkres$pvalue<kk@pvalueCutoff & kkres$p.adjust<kk@pvalueCutoff ,]
+links<-sapply(rownames(head(kk)),function(x){browseKEGG(kk, x)})
+geneList<- L_CTRL_vs_L_S$log2FoldChange
+names(geneList)<-L_CTRL_vs_L_S$ENTREZID
+```            
+
+
+## KEGG Maps
+
+
+### hsa05168 ~ Herpes simplex virus 1 infection
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05168 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05168",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05168.pathview.png)
+
+
+### hsa05164 ~ Influenza A
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05164 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05164",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05164.pathview.png)
+
+### hsa04145 ~ Phagosome
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa04145 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04145",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa04145.pathview.png)
+
+### hsa04612 ~ Antigen processing and presentation
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa04612 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04612",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa04612.pathview.png)
+
+### hsa04640 ~ Hematopoietic cell lineage
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa04640 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04640",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa04640.pathview.png)
+
+
+# S_CTRL_vs_S_K
+
+Skin biopsy samples from patients with renal complications compared to skin biopsy samples from healthy controls.
+
+
+## KEGG Enrichment Analysis                      
+
+                      
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+library(readxl)
+S_CTRL_vs_S_K <- read_excel("C:/deskt/DIR/7th/Desktop/Matija PhD/S_CTRL_vs_S_K.xlsx")
+# KEGG Enrichment Analysis of Gene Set
+library(clusterProfiler)
+library(pathview)
+kk <- enrichKEGG(gene         = S_CTRL_vs_S_K$ENTREZID,
+                 organism     = 'hsa',
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.05)
+kkres<-as.data.frame(kk@result)
+knitr::kable(kkres[order(-kkres$Count), ])
+significantkkres<-kkres[kkres$pvalue<kk@pvalueCutoff & kkres$p.adjust<kk@pvalueCutoff ,]
+links<-sapply(rownames(head(kk)),function(x){browseKEGG(kk, x)})
+geneList<- S_CTRL_vs_S_K$log2FoldChange
+names(geneList)<-S_CTRL_vs_S_K$ENTREZID
+```            
+
+
+## KEGG Maps
+
+
+### hsa05171 ~ Coronavirus disease - COVID-19
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05171 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05171",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05171.pathview.png)
+
+### hsa03010 ~ Ribosome
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa03010 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa03010",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa03010.pathview.png)
+
+### hsa05010 ~ Alzheimer disease
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05010 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05010",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05010.pathview.png)
+
+### hsa04151 ~ PI3K-Akt signaling pathway
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa04151 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04151",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa04151.pathview.png)
+
+### hsa05165 ~ Human papillomavirus infection
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05165 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa04151",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05165.pathview.png)
+
+
+
+
+# S_CTRL_vs_S_S 
+
+Skin biopsy samples from patients with skin limited disease compared to skin biopsy samples from healthy controls.
+
+## KEGG Enrichment Analysis                      
+
+                      
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+library(readxl)
+S_CTRL_vs_S_S <- read_excel("C:/deskt/DIR/7th/Desktop/Matija PhD/S_CTRL_vs_S_S.xlsx")
+# KEGG Enrichment Analysis of Gene Set
+library(clusterProfiler)
+library(pathview)
+kk <- enrichKEGG(gene         = S_CTRL_vs_S_S$ENTREZID,
+                 organism     = 'hsa',
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.05)
+kkres<-as.data.frame(kk@result)
+knitr::kable(kkres[order(-kkres$Count), ])
+significantkkres<-kkres[kkres$pvalue<kk@pvalueCutoff & kkres$p.adjust<kk@pvalueCutoff ,]
+links<-sapply(rownames(head(kk)),function(x){browseKEGG(kk, x)})
+geneList<- S_CTRL_vs_S_S$log2FoldChange
+names(geneList)<-S_CTRL_vs_S_S$ENTREZID
+```      
+
+## KEGG Maps
+
+
+
+### hsa05208 ~ Chemical carcinogenesis - reactive oxygen species
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05208 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05208",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05208.pathview.png)
+
+### hsa05020 ~ Prion disease
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05020 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05020",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05020.pathview.png)
+
+
+### hsa05010 ~ Alzheimer disease
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05010 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05010",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05010.pathview.png)
+
+
+### hsa00190 ~ Oxidative phosphorylation
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa00190 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa00190",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa00190.pathview.png)
+
+### hsa05415 ~ Diabetic cardiomyopathy
+
+```{r comment=NA, message=FALSE, warning=FALSE, echo=FALSE}
+hsa05415 <- pathview(gene.data  = geneList,
+                     pathway.id = "hsa05415",
+                     species    = "hsa",
+                     limit      = list(gene=max(abs(geneList)), cpd=1))
+```  
+
+![](hsa05415.pathview.png)
