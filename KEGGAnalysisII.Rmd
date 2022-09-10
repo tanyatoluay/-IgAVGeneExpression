@@ -1,0 +1,303 @@
+---
+title: "Analysis 2 (KEGG Maps Without Limit Parameters)"
+author: "Tanya Deniz Toluay"
+date: "21/08/2021"
+output: 
+ html_document:
+    theme: lumen
+    code_folding: hide
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+pkgs<-c("DESeq2","SummarizedExperiment","GEOquery","biomaRt","tidyverse","stringr","pheatmap","RColorBrewer")
+invisible(sapply(pkgs,library, character.only = TRUE))
+library("ggnewscale")
+library("reshape2")
+library(GEOquery)
+library(limma)
+library(umap)
+```
+
+
+
+                      
+
+# L_CTRL_vs_L_K 
+
+## Data
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+library(readxl)
+L_CTRL_vs_L_K_ <- read_excel("C:/deskt/DIR/7th/Desktop/Maps/LK/L_CTRL_vs_L_K..xlsx")
+# KEGG Enrichment Analysis of Gene Set
+library(clusterProfiler)
+library(pathview)
+knitr::kable(L_CTRL_vs_L_K_)
+```
+
+## KEGG Enrichment Analysis
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+kk1 <- enrichKEGG(gene         = L_CTRL_vs_L_K_$ENTREZID,
+                 organism     = 'hsa',
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.05)
+kkres1<-as.data.frame(kk1@result)
+knitr::kable(kkres1[order(-kkres1$Count), ])
+significantkkres1<-kkres1[kkres1$pvalue<kk1@pvalueCutoff & kkres1$p.adjust<kk1@pvalueCutoff ,]
+geneList1<- L_CTRL_vs_L_K_$log2FoldChange
+names(geneList1)<-L_CTRL_vs_L_K_$ENTREZID
+```            
+
+## KEGG Maps
+
+### hsa04611 ~	Platelet activation
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04611 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa04611",
+                     species    = "hsa")
+```  
+
+
+![](hsa04611.pathview.png)
+
+
+### hsa04650 ~	Natural killer cell mediated cytotoxicity
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04650 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa04650",
+                     species    = "hsa")
+```  
+
+
+![](hsa04650.pathview.png)
+
+
+### hsa04514 ~	Cell adhesion molecules
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04514 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa04514",
+                     species    = "hsa")
+```  
+
+
+![](hsa04514.pathview.png)
+
+
+### hsa04510 ~	Focal adhesion
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04510 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa04510",
+                     species    = "hsa")
+```  
+
+
+![](hsa04510.pathview.png)
+
+
+### hsa00590 ~	Arachidonic acid metabolism 
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa00590 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa00590",
+                     species    = "hsa")
+```  
+
+
+![](hsa00590.pathview.png)
+
+
+### hsa05166 ~	Human T-cell leukemia virus 1 infection
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa05166 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa05166",
+                     species    = "hsa")
+```  
+
+
+![](hsa05166.pathview.png)
+
+
+### hsa04613 ~	Neutrophil extracellular trap formation
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04613 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa04613",
+                     species    = "hsa")
+```  
+
+
+![](hsa04613.pathview.png)
+
+
+### hsa04612 ~	Antigen processing and presentation
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04612 <- pathview(gene.data  = geneList1,
+                     pathway.id = "hsa04612",
+                     species    = "hsa")
+```  
+
+
+![](hsa04612.pathview.png)
+
+
+
+
+# L_CTRL_vs_L_S 
+
+## Data
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+library(readxl)
+L_CTRL_vs_L_S <- read_excel("C:/deskt/DIR/7th/Desktop/Matija PhD/L_CTRL_vs_L_S.xlsx")
+# KEGG Enrichment Analysis of Gene Set
+library(clusterProfiler)
+library(pathview)
+knitr::kable(L_CTRL_vs_L_K_)
+```
+
+## KEGG Enrichment Analysis
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+kk2 <- enrichKEGG(gene         = L_CTRL_vs_L_S$ENTREZID,
+                 organism     = 'hsa',
+                 pAdjustMethod = "BH",
+                 pvalueCutoff = 0.05)
+kkres2<-as.data.frame(kk2@result)
+knitr::kable(kkres2[order(-kkres2$Count), ])
+significantkkres2<-kkres2[kkres2$pvalue<kk2@pvalueCutoff & kkres2$p.adjust<kk2@pvalueCutoff ,]
+geneList2<- L_CTRL_vs_L_S$log2FoldChange
+names(geneList2)<-L_CTRL_vs_L_S$ENTREZID
+```            
+
+
+## KEGG Maps
+
+### hsa04650 ~	Natural killer cell mediated cytotoxicity
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04650 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04650",
+                     species    = "hsa")
+```  
+
+
+![](hsa04650.pathview.png)
+
+### hsa04613 ~	Neutrophil extracellular trap formation
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04613 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04613",
+                     species    = "hsa")
+```  
+
+
+![](hsa04613.pathview.png)
+
+
+### hsa04611 ~	Platelet activation
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04611 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04611",
+                     species    = "hsa")
+```  
+
+
+![](hsa04611.pathview.png)
+
+### hsa04672 ~	Intestinal immune network for IgA production 
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04672 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04672",
+                     species    = "hsa")
+```  
+
+
+![](hsa04672.pathview.png)
+
+
+### hsa04621 ~	NOD-like receptor signalling pathway 
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04621 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04621",
+                     species    = "hsa")
+```  
+
+
+![](hsa04621.pathview.png)
+
+
+### hsa05150 ~	Staphylococcus aureus infection
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa05150 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa05150",
+                     species    = "hsa")
+```  
+
+
+![](hsa05150.pathview.png)
+
+
+### hsa05322 ~	Systemic lupus erythematosus
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa05322 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa05322",
+                     species    = "hsa")
+```  
+
+
+![](hsa05322.pathview.png)
+
+
+### hsa04659 ~	Th17 cell differentiation 
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04659 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04659",
+                     species    = "hsa")
+```  
+
+
+![](hsa04659.pathview.png)
+
+
+### hsa04060 ~	Cytokine-cytokine receptor interaction 
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04060 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04060",
+                     species    = "hsa")
+```  
+
+
+![](hsa04060.pathview.png)
+
+
+### hsa04612 ~	Antigen processing and presentation 
+
+```{r comment=NA, message=FALSE, warning=FALSE}
+hsa04060 <- pathview(gene.data  = geneList2,
+                     pathway.id = "hsa04612",
+                     species    = "hsa")
+```  
+
+
+![](hsa04612.pathview.png)
